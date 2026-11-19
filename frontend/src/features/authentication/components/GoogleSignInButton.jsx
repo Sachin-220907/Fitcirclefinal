@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { GoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -5,31 +6,12 @@ import { useAuth } from "../context/AuthContext";
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://localhost:3000")
   .replace(/\/+$/, "");
 
-function parseJwt(token) {
-  try {
-    const base64Url = token.split(".")[1];
-    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-    const jsonPayload = decodeURIComponent(
-      atob(base64)
-        .split("")
-        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-        .join("")
-    );
-    return JSON.parse(jsonPayload);
-  } catch (e) {
-    console.error("JWT Decode error:", e);
-    return null;
-  }
-}
-
 export function GoogleSignInButton() {
   const navigate = useNavigate();
-  const { loginWithGoogleProfile, loginWithDemo } = useAuth();
+  const { loginWithGoogleProfile } = useAuth();
+  const [error, setError] = useState("");
 
   async function handleGoogleLogin(credential) {
-    // 1. First parse the real Google OAuth credential
-    const googleProfile = parseJwt(credential);
-
     try {
       const response = await fetch(`${API_BASE_URL}/auth/google`, {
         method: "POST",
@@ -37,44 +19,43 @@ export function GoogleSignInButton() {
         credentials: "include",
         body: JSON.stringify({ credential })
       });
+      const data = await response.json();
 
-      if (response.ok) {
-        const data = await response.json();
-        const authedUser = data.user || data;
-        loginWithGoogleProfile(authedUser);
-        navigate("/dashboard");
-        return;
+      if (!response.ok) {
+        const message = Array.isArray(data.message)
+          ? data.message.join(", ")
+          : data.message;
+        throw new Error(message || "Google sign-in failed. Please try again.");
       }
-    } catch {
-      // Backend not running
-    }
 
-    // 2. Authenticate directly with the real Google user profile data
-    if (googleProfile) {
-      loginWithGoogleProfile({
-        name: googleProfile.name || googleProfile.given_name || "Google Athlete",
-        email: googleProfile.email,
-        picture: googleProfile.picture,
-        sub: googleProfile.sub
-      });
+      if (!data.user) {
+        throw new Error("Google sign-in did not return a user.");
+      }
+
+      loginWithGoogleProfile(data.user);
       navigate("/dashboard");
-    } else {
-      loginWithDemo().then(() => navigate("/dashboard"));
+    } catch (signInError) {
+      setError(
+        signInError instanceof Error
+          ? signInError.message
+          : "Google sign-in failed. Please try again."
+      );
     }
   }
 
   return (
     <div className="google-login-container">
+      {error && <div className="auth-error-banner" role="alert">{error}</div>}
       <GoogleLogin
         onSuccess={(credentialResponse) => {
           if (credentialResponse.credential) {
             handleGoogleLogin(credentialResponse.credential);
           } else {
-            loginWithDemo().then(() => navigate("/dashboard"));
+            setError("Google did not return a sign-in credential. Please try again.");
           }
         }}
         onError={() => {
-          console.warn("Google sign-in canceled or unconfigured.");
+          setError("Google sign-in was cancelled or could not be completed.");
         }}
         useOneTap={false}
         theme="outline"

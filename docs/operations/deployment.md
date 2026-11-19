@@ -10,13 +10,16 @@ Set these project environment variables for Production (and Preview if used):
 
 | Variable | Value |
 | --- | --- |
-| `VITE_API_BASE_URL` | Render API origin, e.g. `https://fitcircle-api.onrender.com` (no `/api` suffix) |
-| `VITE_SOCKET_URL` | Same Render API origin |
-| `VITE_GOOGLE_CLIENT_ID` | Google OAuth web client ID |
+| `VITE_API_BASE_URL` | `https://fitcirclefinal.onrender.com` (no `/api` suffix) |
+| `VITE_SOCKET_URL` | `https://fitcirclefinal.onrender.com` |
+| `VITE_GOOGLE_CLIENT_ID` | Configured in `frontend/.env.production` |
 
 Vite embeds `VITE_*` values into the frontend at build time. Redeploy after
-changing them. Add the Vercel production URL to the Google OAuth client's
-authorized JavaScript origins.
+changing them. In Google Cloud Console, open the OAuth 2.0 web client used by
+the frontend and add `https://fitcirclefinal.vercel.app` to **Authorized
+JavaScript origins**. This app sends Google ID tokens from the browser, so it
+does not use a Google OAuth redirect URI. The same OAuth client ID must be
+allowed for this origin in Google Cloud Console.
 
 ## Render backend
 
@@ -29,8 +32,8 @@ Set these backend environment variables in Render:
 | Variable | Value |
 | --- | --- |
 | `DATABASE_URL` | PostgreSQL connection string, preferably Render PostgreSQL's internal URL |
-| `FRONTEND_ORIGIN` | Exact Vercel origin, including `https://`; comma-separate additional trusted origins |
-| `GOOGLE_CLIENT_ID` | The same Google OAuth web client ID used by the frontend |
+| `FRONTEND_ORIGIN` | `https://fitcirclefinal.vercel.app` |
+| `GOOGLE_CLIENT_ID` | Configured by the Render Blueprint to match the frontend |
 | `NODE_ENV` | Set to `production` by the blueprint |
 
 The service listens on Render's `PORT`. Apply Prisma migrations before serving

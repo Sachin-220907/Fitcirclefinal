@@ -10,6 +10,6 @@ services:
       - key: DATABASE_URL
         sync: false
       - key: FRONTEND_ORIGIN
-        sync: false
+        value: https://fitcirclefinal.vercel.app
       - key: GOOGLE_CLIENT_ID
-        sync: false
+        value: 519477137056-64qtmbrabthchrdqerfg6sfpprteb16i.apps.googleusercontent.com

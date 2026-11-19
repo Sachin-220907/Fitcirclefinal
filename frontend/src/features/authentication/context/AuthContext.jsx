@@ -114,20 +114,23 @@ export function AuthProvider({ children }) {
   function loginWithGoogleProfile(googleProfile) {
     const existingUsers = JSON.parse(localStorage.getItem("fitcircle_all_users") || "[]");
     const found = existingUsers.find((u) => u.email === googleProfile.email);
+    const username = googleProfile.username || found?.username ||
+      (googleProfile.email ? googleProfile.email.split("@")[0] : "athlete")
+        .toLowerCase()
+        .replace(/[^a-z0-9_]/g, "");
 
-    const authedUser = found
-      ? { ...found, avatarUrl: googleProfile.picture || found.avatarUrl, displayName: googleProfile.name || found.displayName }
-      : {
-          id: "google_" + (googleProfile.sub || Date.now()),
-          displayName: googleProfile.name || "Google Athlete",
-          username: (googleProfile.email ? googleProfile.email.split("@")[0] : "athlete").toLowerCase().replace(/[^a-z0-9_]/g, ""),
-          email: googleProfile.email,
-          avatarUrl: googleProfile.picture || DEMO_USER.avatarUrl,
-          bio: "Passionate about health, fitness and peak performance.",
-          gender: "Prefer not to say",
-          onboarded: true,
-          stats: { ...DEMO_USER.stats }
-        };
+    const authedUser = {
+      ...found,
+      id: googleProfile.id || found?.id || `google_${Date.now()}`,
+      displayName: googleProfile.displayName || found?.displayName || "Google Athlete",
+      username,
+      email: googleProfile.email || found?.email,
+      avatarUrl: googleProfile.avatarUrl || found?.avatarUrl || DEMO_USER.avatarUrl,
+      bio: found?.bio || "Passionate about health, fitness and peak performance.",
+      gender: found?.gender || "Prefer not to say",
+      onboarded: found?.onboarded ?? true,
+      stats: found?.stats || { ...DEMO_USER.stats }
+    };
 
     setUser(authedUser);
     localStorage.setItem("fitcircle_user", JSON.stringify(authedUser));
