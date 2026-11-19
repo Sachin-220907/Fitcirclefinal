@@ -1,0 +1,58 @@
+.intro-screen {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.intro-logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.intro-logo {
+  display: block;
+  width: min(70vw, 380px);
+  height: auto;
+  opacity: 0;
+  animation: logoIntro 3s ease-in-out forwards;
+}
+
+@keyframes logoIntro {
+  0% {
+    opacity: 0;
+    transform: scale(0.75);
+  }
+
+  20% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+
+  40% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  80% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-logo {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
