@@ -2,6 +2,9 @@ import { GoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://localhost:3000")
+  .replace(/\/+$/, "");
+
 function parseJwt(token) {
   try {
     const base64Url = token.split(".")[1];
@@ -28,7 +31,7 @@ export function GoogleSignInButton() {
     const googleProfile = parseJwt(credential);
 
     try {
-      const response = await fetch("http://localhost:3000/auth/google", {
+      const response = await fetch(`${API_BASE_URL}/auth/google`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

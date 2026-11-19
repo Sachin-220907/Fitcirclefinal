@@ -30,6 +30,8 @@ const DEMO_USER = {
 };
 
 const INITIAL_TAKEN_USERNAMES = ["sachin", "admin", "fitcircle", "coach_alex", "sarah_fit"];
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://localhost:3000")
+  .replace(/\/+$/, "");
 
 const AuthContext = createContext(undefined);
 
@@ -74,7 +76,7 @@ export function AuthProvider({ children }) {
   async function login(email, password) {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:3000/auth/login", {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -213,7 +215,7 @@ export function AuthProvider({ children }) {
 
   async function logout() {
     try {
-      await fetch("http://localhost:3000/auth/logout", {
+      await fetch(`${API_BASE_URL}/auth/logout`, {
         method: "POST",
         credentials: "include"
       });

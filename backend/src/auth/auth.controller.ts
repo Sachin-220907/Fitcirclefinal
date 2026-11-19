@@ -25,7 +25,7 @@ export class AuthController {
     response.cookie("fitcircle_session", result.sessionToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       path: "/",
       expires: result.expiresAt
     });
@@ -61,7 +61,7 @@ export class AuthController {
     response.clearCookie("fitcircle_session", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       path: "/"
     });
 
