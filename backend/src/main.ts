@@ -5,17 +5,17 @@ import { AppModule } from "./app.module";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const allowedOrigins = (
-    process.env.FRONTEND_ORIGIN ||
-    (process.env.NODE_ENV === "production" ? "" : "http://localhost:5173")
-  )
+  const defaultOrigin =
+    process.env.NODE_ENV === "production"
+      ? "https://fitcirclefinal.vercel.app"
+      : "http://localhost:5173";
+  const configuredOrigins = (process.env.FRONTEND_ORIGIN || "")
     .split(",")
-    .map((origin) => origin.trim())
+    .map((origin) => origin.trim().replace(/\/+$/, ""))
     .filter(Boolean);
-
-  if (allowedOrigins.length === 0) {
-    throw new Error("FRONTEND_ORIGIN must be set in production");
-  }
+  const allowedOrigins = Array.from(
+    new Set([defaultOrigin, ...configuredOrigins])
+  );
 
   app.use(cookieParser());
 

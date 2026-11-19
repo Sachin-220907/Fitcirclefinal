@@ -4,7 +4,8 @@
 
 Create a Vercel project from this repository and set its **Root Directory** to
 `frontend`. Use the Vite defaults (`npm run build`, output directory `dist`).
-`frontend/vercel.json` sends browser routes to the SPA entry point.
+`frontend/vercel.json` sends browser routes to the SPA entry point and enables
+the cross-origin popup policy required by Google sign-in.
 
 Set these project environment variables for Production (and Preview if used):
 
