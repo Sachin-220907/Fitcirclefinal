@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../authentication/context/AuthContext";
+import { useSocket } from "../../../app/providers/SocketProvider";
 import { useSelectedDate } from "../../../app/context/DateContext";
 import QuickLogModal from "../components/QuickLogModal";
 import "./DashboardPage.css";
@@ -65,6 +66,7 @@ for (let i = 1; i <= 7; i++) {
 
 export function DashboardPage() {
   const { user } = useAuth();
+  const { emit, on } = useSocket();
   const { selectedDate, jumpToToday } = useSelectedDate();
   const [allLogs, setAllLogs] = useState(INITIAL_LOGS);
   const [isLogModalOpen, setIsLogModalOpen] = useState(false);
@@ -91,17 +93,83 @@ export function DashboardPage() {
 
   const isTodaySelected = dateKey === getDateKey(new Date());
 
+  // Real-time synchronization with Nutrition Page and cross-tab actions
+  useEffect(() => {
+    const unsubWater = on("WATER_LOG_UPDATED", (payload) => {
+      if (payload?.waterMl !== undefined) {
+        const liters = parseFloat((payload.waterMl / 1000).toFixed(2));
+        const goal = payload.waterGoalMl ? parseFloat((payload.waterGoalMl / 1000).toFixed(1)) : 3.0;
+        setAllLogs((prev) => {
+          const todayKey = getDateKey(new Date());
+          const existing = prev[todayKey] || {};
+          return {
+            ...prev,
+            [todayKey]: {
+              ...existing,
+              waterLiters: liters,
+              waterGoal: goal
+            }
+          };
+        });
+      }
+    });
+
+    const unsubMeals = on("MEALS_UPDATED", (meals) => {
+      if (meals) {
+        const allItems = [
+          ...(meals.breakfast || []),
+          ...(meals.lunch || []),
+          ...(meals.dinner || []),
+          ...(meals.snacks || [])
+        ];
+        const cal = allItems.reduce((acc, f) => acc + (f.calories || 0), 0);
+        const p = allItems.reduce((acc, f) => acc + (f.protein || 0), 0);
+        const c = allItems.reduce((acc, f) => acc + (f.carbs || 0), 0);
+        const f = allItems.reduce((acc, f) => acc + (f.fats || 0), 0);
+
+        setAllLogs((prev) => {
+          const todayKey = getDateKey(new Date());
+          const existing = prev[todayKey] || {};
+          return {
+            ...prev,
+            [todayKey]: {
+              ...existing,
+              calories: cal,
+              protein: p,
+              carbs: c,
+              fats: f
+            }
+          };
+        });
+      }
+    });
+
+    return () => {
+      unsubWater();
+      unsubMeals();
+    };
+  }, [on]);
+
   function updateWater(delta) {
     setAllLogs((prev) => {
       const existing = prev[dateKey] || { ...currentData };
       const newLiters = Math.max(0, Math.round((existing.waterLiters + delta) * 100) / 100);
-      return {
+      const nextLogs = {
         ...prev,
         [dateKey]: {
           ...existing,
           waterLiters: newLiters
         }
       };
+
+      if (isTodaySelected) {
+        emit("WATER_LOG_UPDATED", {
+          waterMl: Math.round(newLiters * 1000),
+          waterGoalMl: Math.round((existing.waterGoal || 3.0) * 1000)
+        });
+      }
+
+      return nextLogs;
     });
   }
 

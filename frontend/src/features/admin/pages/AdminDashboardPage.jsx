@@ -47,7 +47,7 @@ export function AdminDashboardPage() {
           </thead>
           <tbody>
             <tr>
-              <td>Alex Mercer</td>
+              <td>Sachin</td>
               <td><span className="badge-active">Active</span></td>
               <td>48</td>
               <td>Athlete</td>

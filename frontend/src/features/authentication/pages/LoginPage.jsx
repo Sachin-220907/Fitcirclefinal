@@ -66,7 +66,7 @@ export function LoginPage() {
         <form onSubmit={handleSubmit} className="auth-actions">
           <input
             type="email"
-            placeholder="Email address (e.g. alex@fitcircle.app)"
+            placeholder="Email address (e.g. sachin@fitcircle.app)"
             className="auth-input"
             value={email}
             onChange={(e) => setEmail(e.target.value)}

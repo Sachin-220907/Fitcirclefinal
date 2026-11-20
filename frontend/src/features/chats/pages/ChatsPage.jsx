@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSocket } from "../../../app/providers/SocketProvider";
 import "./ChatsPage.css";
 
 const CONVERSATIONS = [
@@ -8,9 +9,9 @@ const CONVERSATIONS = [
     role: "Head Fitness Trainer",
     avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
     status: "online",
-    unread: 2,
+    unread: 0,
     messages: [
-      { id: 1, sender: "them", text: "Hey Alex! Reviewed your squat footage from yesterday. Stance width was spot on.", time: "10:15 AM" },
+      { id: 1, sender: "them", text: "Hey Sachin! Reviewed your squat footage from yesterday. Stance width was spot on.", time: "10:15 AM" },
       { id: 2, sender: "them", text: "Remember to brace hard 360° into your lifting belt before initiating the descent.", time: "10:16 AM" },
       { id: 3, sender: "me", text: "Got it coach! Felt much stronger on the 135kg set with that cue.", time: "10:22 AM" },
       { id: 4, sender: "them", text: "Awesome. Let's aim for 4 reps at 140kg on Thursday's heavy lower session!", time: "10:24 AM" }
@@ -24,7 +25,7 @@ const CONVERSATIONS = [
     status: "online",
     unread: 0,
     messages: [
-      { id: 1, sender: "them", text: "Are you running the 10K riverside trail this Saturday morning?", time: "Yesterday" },
+      { id: 1, sender: "them", text: "Are you running the 10K riverside trail this Saturday morning, Sachin?", time: "Yesterday" },
       { id: 2, sender: "me", text: "Yes! Planning to start around 7:00 AM before the heat kicks in.", time: "Yesterday" },
       { id: 3, sender: "them", text: "Perfect, I'll meet you near the north trail entrance with electrolytes!", time: "Yesterday" }
     ]
@@ -37,7 +38,7 @@ const CONVERSATIONS = [
     status: "offline",
     unread: 0,
     messages: [
-      { id: 1, sender: "them", text: "Your hydration levels are improving nicely. Keep targeting the 3.0L threshold on high volume training days.", time: "Nov 15" }
+      { id: 1, sender: "them", text: "Your hydration levels are improving nicely, Sachin. Keep targeting the 3.0L threshold on high volume training days.", time: "Nov 15" }
     ]
   },
   {
@@ -46,7 +47,7 @@ const CONVERSATIONS = [
     role: "Group (24 members)",
     avatar: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=150&q=80",
     status: "online",
-    unread: 5,
+    unread: 2,
     messages: [
       { id: 1, sender: "them", text: "Marcus: Track workout starts at 6:30 PM tomorrow at East River Track!", time: "Nov 16" },
       { id: 2, sender: "them", text: "Chloe: 400m repeats on deck 🏃‍♂️💨", time: "Nov 16" }
@@ -55,12 +56,34 @@ const CONVERSATIONS = [
 ];
 
 export function ChatsPage() {
+  const { emit, on } = useSocket();
   const [conversations, setConversations] = useState(CONVERSATIONS);
   const [activeChatId, setActiveChatId] = useState("c1");
   const [messageText, setMessageText] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
   const activeChat = conversations.find((c) => c.id === activeChatId) || conversations[0];
+
+  // Listen for real-time incoming messages
+  useEffect(() => {
+    const unsubscribe = on("CHAT_MESSAGE_RECEIVED", (incoming) => {
+      if (!incoming || !incoming.chatId) return;
+
+      setConversations((prev) =>
+        prev.map((c) => {
+          if (c.id === incoming.chatId) {
+            return {
+              ...c,
+              messages: [...c.messages, incoming.message]
+            };
+          }
+          return c;
+        })
+      );
+    });
+
+    return unsubscribe;
+  }, [on]);
 
   function handleSendMessage(e) {
     e.preventDefault();
@@ -69,7 +92,7 @@ export function ChatsPage() {
     const newMsg = {
       id: Date.now(),
       sender: "me",
-      text: messageText,
+      text: messageText.trim(),
       time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
     };
 
@@ -85,14 +108,21 @@ export function ChatsPage() {
       })
     );
 
+    // Emit real-time message event
+    emit("CHAT_MESSAGE_SENT", {
+      chatId: activeChatId,
+      message: newMsg
+    });
+
+    const sentText = messageText.trim();
     setMessageText("");
 
-    // Simulate quick coach reply
+    // Simulate real-time coach reply
     setTimeout(() => {
       const replyMsg = {
         id: Date.now() + 1,
         sender: "them",
-        text: `Received! That sounds like a solid plan. Keep up the dedication! 💪`,
+        text: `Got it, Sachin! That sounds like a solid plan. Keep up the dedication! 💪`,
         time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
       };
 
@@ -107,6 +137,11 @@ export function ChatsPage() {
           return c;
         })
       );
+
+      emit("CHAT_MESSAGE_RECEIVED", {
+        chatId: activeChatId,
+        message: replyMsg
+      });
     }, 1200);
   }
 

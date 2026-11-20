@@ -120,7 +120,6 @@ export function NavbarCalendarPicker() {
         onClick={() => setIsOpen(!isOpen)}
         title="Choose date for Dashboard & Logs"
       >
-        <span className="cal-btn-icon">📅</span>
         <span className="cal-btn-text">Calendar</span>
         <span className="cal-btn-date-pill">{formattedNavDate}</span>
         <span className="cal-arrow-indicator">{isOpen ? "▲" : "▼"}</span>

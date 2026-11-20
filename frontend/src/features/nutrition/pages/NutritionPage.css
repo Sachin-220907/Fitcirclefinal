@@ -440,3 +440,565 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ========================================================
+   WATER INTAKE SECTION WITH DYNAMIC GRAPHIC VESSELS
+   ======================================================== */
+.water-intake-section {
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: var(--radius-md, 16px);
+  padding: 28px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.water-intake-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
+}
+
+.water-intake-header h3 {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-primary, #0f172a);
+}
+
+.water-intake-header p {
+  font-size: 13px;
+  color: var(--text-secondary, #64748b);
+  margin-top: 4px;
+}
+
+.water-target-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.target-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary, #64748b);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.target-display-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.target-display-chip:hover {
+  background: #dbeafe;
+  border-color: #93c5fd;
+}
+
+.btn-edit-target {
+  background: none;
+  border: none;
+  color: #2563eb;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+}
+
+.custom-goal-form {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.custom-goal-form input {
+  width: 90px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #2563eb;
+  font-size: 13px;
+  font-weight: 700;
+  outline: none;
+}
+
+.btn-save-goal {
+  padding: 6px 12px;
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-cancel-goal {
+  background: none;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px;
+}
+
+/* Stage Indicator Bar */
+.vessel-stage-indicator-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-subtle, #f8fafc);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 12px;
+  padding: 10px 16px;
+  flex-wrap: wrap;
+}
+
+.vessel-stage-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.vessel-stage-pill.active {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #0284c7;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3);
+}
+
+.v-pill-icon {
+  font-size: 14px;
+}
+
+.stage-arrow {
+  color: #94a3b8;
+  font-weight: 800;
+}
+
+/* Body Layout */
+.water-intake-body {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+/* Dynamic Graphic Vessel */
+.dynamic-vessel-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  background: linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 100%);
+  border: 1px solid #bae6fd;
+  border-radius: 20px;
+  padding: 24px 16px;
+}
+
+.vessel-canvas {
+  width: 140px;
+  height: 230px;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+/* Base Vessel styling */
+.svg-vessel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* 1. GLASS VESSEL (<= 1.0 L) */
+.glass-vessel .glass-rim {
+  width: 100px;
+  height: 12px;
+  border: 3px solid #0284c7;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.7);
+  z-index: 3;
+}
+
+.glass-vessel .glass-body {
+  position: relative;
+  width: 96px;
+  height: 180px;
+  margin-top: -6px;
+  border: 3px solid #0284c7;
+  border-top: none;
+  border-bottom-left-radius: 24px;
+  border-bottom-right-radius: 24px;
+  background: rgba(255, 255, 255, 0.45);
+  overflow: hidden;
+  box-shadow: inset 0 0 12px rgba(2, 132, 199, 0.15);
+}
+
+/* 2. BOTTLE VESSEL (> 1.0 L and <= 3.0 L) */
+.bottle-vessel .bottle-cap {
+  width: 38px;
+  height: 14px;
+  background: #0369a1;
+  border-radius: 4px 4px 0 0;
+  z-index: 3;
+}
+
+.bottle-vessel .bottle-neck {
+  width: 44px;
+  height: 18px;
+  border-left: 3px solid #0284c7;
+  border-right: 3px solid #0284c7;
+  background: rgba(255, 255, 255, 0.6);
+  z-index: 2;
+}
+
+.bottle-vessel .bottle-body {
+  position: relative;
+  width: 105px;
+  height: 165px;
+  border: 3px solid #0284c7;
+  border-radius: 18px 18px 24px 24px;
+  background: rgba(255, 255, 255, 0.45);
+  overflow: hidden;
+  box-shadow: inset 0 0 14px rgba(2, 132, 199, 0.2);
+}
+
+/* 3. JUG VESSEL (> 3.0 L) */
+.jug-vessel .jug-cap {
+  width: 50px;
+  height: 14px;
+  background: #0284c7;
+  border-radius: 4px 4px 0 0;
+  z-index: 3;
+}
+
+.jug-vessel .jug-handle {
+  position: absolute;
+  right: -14px;
+  top: 40px;
+  width: 24px;
+  height: 90px;
+  border: 4px solid #0284c7;
+  border-left: none;
+  border-radius: 0 18px 18px 0;
+  z-index: 1;
+}
+
+.jug-vessel .jug-body {
+  position: relative;
+  width: 125px;
+  height: 175px;
+  border: 3px solid #0284c7;
+  border-radius: 24px 24px 28px 28px;
+  background: rgba(255, 255, 255, 0.45);
+  overflow: hidden;
+  box-shadow: inset 0 0 16px rgba(2, 132, 199, 0.25);
+  z-index: 2;
+}
+
+/* Water liquid animation inside vessels */
+.vessel-water-fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+  transition: height 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border-radius: 0 0 20px 20px;
+}
+
+.water-wave-top {
+  position: absolute;
+  top: -4px;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: #7dd3fc;
+  border-radius: 50%;
+  opacity: 0.8;
+}
+
+.glass-graduations,
+.bottle-graduations,
+.jug-graduations {
+  position: absolute;
+  right: 6px;
+  top: 10px;
+  bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.glass-graduations span,
+.bottle-graduations span,
+.jug-graduations span {
+  font-size: 9px;
+  font-weight: 800;
+  color: #0369a1;
+  background: rgba(255, 255, 255, 0.75);
+  padding: 1px 4px;
+  border-radius: 4px;
+  border-right: 3px solid #0284c7;
+}
+
+.vessel-badge {
+  margin-top: 8px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #0369a1;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.vessel-metrics-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+}
+
+.current-water-text {
+  font-size: 32px;
+  font-weight: 900;
+  color: #0369a1;
+}
+
+.goal-subtext {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.hydration-status-banner {
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #0284c7;
+  background: #ffffff;
+  padding: 5px 12px;
+  border-radius: 12px;
+  border: 1px solid #bae6fd;
+}
+
+/* Right Actions Pane */
+.water-intake-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.simple-add-water-box {
+  background: var(--bg-subtle, #f8fafc);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.action-box-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text-primary, #0f172a);
+}
+
+.quick-step-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.btn-quick-step {
+  padding: 12px 10px;
+  border-radius: 12px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-quick-step:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  transform: translateY(-2px);
+}
+
+.btn-quick-step.primary {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  color: #1d4ed8;
+}
+
+.btn-quick-step.primary:hover {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.btn-quick-step.undo {
+  background: #fff1f2;
+  border-color: #fecdd3;
+  color: #e11d48;
+}
+
+.btn-quick-step.undo:hover {
+  background: #ffe4e6;
+}
+
+.custom-water-adder-row {
+  display: flex;
+  gap: 10px;
+}
+
+.custom-water-adder-row input {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  font-size: 13px;
+  outline: none;
+}
+
+.custom-water-adder-row input:focus {
+  border-color: #0284c7;
+}
+
+.btn-submit-water {
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: none;
+  background: #0284c7;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-submit-water:hover:not(:disabled) {
+  background: #0369a1;
+}
+
+.btn-submit-water:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Sip History */
+.sip-history-card {
+  background: #ffffff;
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 16px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sip-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-primary, #0f172a);
+}
+
+.sip-list-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.sip-item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  border-radius: 10px;
+}
+
+.sip-item-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #0284c7;
+  font-size: 13px;
+}
+
+.sip-drop-icon {
+  font-size: 14px;
+}
+
+.sip-item-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sip-item-right span {
+  font-size: 12px;
+  color: #475569;
+  font-weight: 600;
+}
+
+.sip-item-right small {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.no-sips-text {
+  font-size: 12px;
+  color: #94a3b8;
+  text-align: center;
+  padding: 14px;
+}
+
+@media (max-width: 900px) {
+  .water-intake-body {
+    grid-template-columns: 1fr;
+  }
+
+  .quick-step-buttons {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

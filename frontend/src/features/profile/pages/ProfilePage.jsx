@@ -12,13 +12,13 @@ const ACHIEVEMENTS = [
 export function ProfilePage() {
   const { user, updateUser, checkUsernameAvailable } = useAuth();
 
-  const avatarInitial = (user?.email || user?.gmail || user?.username || "A")
+  const avatarInitial = (user?.displayName || user?.email || user?.gmail || user?.username || "S")
     .trim()
     .charAt(0)
     .toUpperCase();
 
-  const [displayName, setDisplayName] = useState(user?.displayName || "Alex Mercer");
-  const [username, setUsername] = useState(user?.username || "alexmercer");
+  const [displayName, setDisplayName] = useState(user?.displayName || "Sachin");
+  const [username, setUsername] = useState(user?.username || "sachin");
   const [bio, setBio] = useState(
     user?.bio || "Fitness enthusiast, marathon runner & wellness advocate. Working on personal endurance records!"
   );

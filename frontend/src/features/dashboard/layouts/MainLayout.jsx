@@ -9,12 +9,12 @@ export function MainLayout() {
   const { theme, toggleTheme } = useTheme();
 
   const navigation = [
-    { name: "Dashboard", path: "/dashboard", icon: "▦" },
-    { name: "Nutrition", path: "/nutrition", icon: "" },
-    { name: "Activity", path: "/activity", icon: "" },
-    { name: "AI Assistant", path: "/ai-assistant", icon: "🤖" },
-    { name: "Community", path: "/community", icon: "👥" },
-    { name: "Chats", path: "/chats", icon: "💬" }
+    { name: "Dashboard", path: "/dashboard" },
+    { name: "Nutrition", path: "/nutrition" },
+    { name: "Activity", path: "/activity" },
+    { name: "AI Assistant", path: "/ai-assistant" },
+    { name: "Community", path: "/community" },
+    { name: "Chats", path: "/chats" }
   ];
 
   return (
@@ -40,7 +40,6 @@ export function MainLayout() {
                 isActive ? "nav-link active" : "nav-link"
               }
             >
-              <span className="nav-icon">{item.icon}</span>
               <span>{item.name}</span>
             </NavLink>
           ))}

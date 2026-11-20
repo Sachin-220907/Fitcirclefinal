@@ -45,18 +45,490 @@
 
 body {
   font-family: var(--font-family);
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  -webkit-font-smoothing: antialiased;
   min-height: 100vh;
   line-height: 1.5;
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  background-color: #f6f8fc;
+  background-image: 
+    radial-gradient(circle at 12% 18%, rgba(16, 185, 129, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 88% 22%, rgba(0, 140, 255, 0.10) 0%, transparent 45%),
+    radial-gradient(circle at 50% 60%, rgba(245, 158, 11, 0.06) 0%, transparent 40%),
+    radial-gradient(circle at 18% 82%, rgba(139, 92, 246, 0.06) 0%, transparent 45%),
+    radial-gradient(circle at 82% 80%, rgba(16, 185, 129, 0.07) 0%, transparent 40%),
+    linear-gradient(135deg, #f8fafc 0%, #edf5fc 50%, #f1f8f5 100%);
+  background-size: 200% 200%, 180% 180%, 220% 220%, 190% 190%, 200% 200%, 100% 100%;
+  background-attachment: fixed;
+  animation: nutritionVitalityFlow 24s ease-in-out infinite alternate;
+  position: relative;
+  overflow-x: hidden;
 }
 
-button, input, select, textarea {
+[data-theme="dark"] body {
+  background-color: #0a0807;
+  background-image: 
+    radial-gradient(circle at 12% 18%, rgba(16, 185, 129, 0.12) 0%, transparent 45%),
+    radial-gradient(circle at 88% 22%, rgba(0, 140, 255, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 50% 60%, rgba(245, 158, 11, 0.08) 0%, transparent 45%),
+    radial-gradient(circle at 18% 82%, rgba(139, 92, 246, 0.08) 0%, transparent 45%),
+    radial-gradient(circle at 82% 80%, rgba(16, 185, 129, 0.10) 0%, transparent 45%),
+    linear-gradient(135deg, #0a0807 0%, #0f172a 50%, #0b1411 100%);
+  background-size: 200% 200%, 180% 180%, 220% 220%, 190% 190%, 200% 200%, 100% 100%;
+  background-attachment: fixed;
+  animation: nutritionVitalityFlow 24s ease-in-out infinite alternate;
+}
+
+@keyframes nutritionVitalityFlow {
+  0% {
+    background-position: 0% 0%, 100% 0%, 50% 50%, 0% 100%, 100% 100%, 0% 0%;
+  }
+  50% {
+    background-position: 100% 50%, 0% 100%, 80% 20%, 50% 0%, 20% 80%, 50% 50%;
+  }
+  100% {
+    background-position: 50% 100%, 50% 50%, 0% 100%, 100% 50%, 80% 20%, 100% 100%;
+  }
+}
+
+button,
+input,
+select,
+textarea {
   font-family: inherit;
 }
 
 a {
   color: inherit;
   text-decoration: none;
+}
+
+/* ==========================================================================
+   UNIVERSAL LIVE ANIMATED GLASS BOXES & GLOSSY HEADINGS (ALL PAGES)
+   ========================================================================== */
+
+/* 1. KEYFRAME ANIMATIONS */
+@keyframes glassCardBgAnimate {
+  0% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  100% {
+    background-position: 0% 100%;
+  }
+}
+
+@keyframes glassCardAuraRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes glossyHeaderShine {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* 2. UNIVERSAL GLASS BOX CONTAINER ON EVERY PAGE */
+.dashboard-card,
+.selected-date-banner,
+.dashboard-calendar-card,
+.macro-box,
+.hero-calorie-box,
+.hydration-interactive-card,
+.staples-showcase-card,
+.food-staple-card,
+.meal-log-card,
+.quick-fluid-card,
+.stopwatch-card,
+.activity-summary-card,
+.workout-history-card,
+.recent-activity-card,
+.activity-stat-box,
+.coach-selector-bar,
+.ai-chat-shell,
+.create-post-card,
+.community-post-card,
+.post-card,
+.challenge-card,
+.trending-card,
+.member-spotlight-card,
+.leaderboard-card,
+.chats-shell,
+.profile-lively-hero,
+.profile-card,
+.body-comp-card,
+.edit-profile-card,
+.stat-highlight-box,
+.settings-section-card,
+.settings-card,
+.notifications-shell,
+.notification-card,
+.admin-card,
+.admin-stat-card,
+.admin-table-container,
+.auth-card,
+.onboarding-card,
+.card,
+.glass-box {
+  position: relative !important;
+  overflow: hidden !important;
+  border-radius: var(--radius-md, 16px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1.5px solid rgba(255, 255, 255, 0.7) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.94) 0%,
+    rgba(235, 245, 255, 0.86) 25%,
+    rgba(246, 242, 255, 0.88) 50%,
+    rgba(232, 247, 255, 0.86) 75%,
+    rgba(255, 255, 255, 0.94) 100%
+  ) !important;
+  background-size: 300% 300% !important;
+  animation: glassCardBgAnimate 10s ease-in-out infinite alternate !important;
+  box-shadow: 0 10px 30px -5px rgba(0, 140, 255, 0.08),
+              inset 0 0 0 1px rgba(255, 255, 255, 0.65),
+              inset 0 1.5px 0 0 rgba(255, 255, 255, 0.95),
+              0 0 15px rgba(0, 140, 255, 0.06);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.35s ease !important;
+}
+
+/* Ensure contents sit above rotating background aura */
+.dashboard-card > *,
+.selected-date-banner > *,
+.dashboard-calendar-card > *,
+.macro-box > *,
+.hero-calorie-box > *,
+.hydration-interactive-card > *,
+.staples-showcase-card > *,
+.food-staple-card > *,
+.meal-log-card > *,
+.quick-fluid-card > *,
+.stopwatch-card > *,
+.activity-summary-card > *,
+.workout-history-card > *,
+.recent-activity-card > *,
+.activity-stat-box > *,
+.coach-selector-bar > *,
+.create-post-card > *,
+.community-post-card > *,
+.post-card > *,
+.challenge-card > *,
+.trending-card > *,
+.member-spotlight-card > *,
+.leaderboard-card > *,
+.profile-card > *,
+.body-comp-card > *,
+.edit-profile-card > *,
+.settings-section-card > *,
+.settings-card > *,
+.notifications-shell > *,
+.notification-card > *,
+.admin-card > *,
+.admin-stat-card > *,
+.auth-card > *,
+.onboarding-card > *,
+.card > *,
+.glass-box > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Rotating Ambient Light Aura Pseudo-element */
+.dashboard-card::before,
+.selected-date-banner::before,
+.dashboard-calendar-card::before,
+.macro-box::before,
+.hero-calorie-box::before,
+.hydration-interactive-card::before,
+.staples-showcase-card::before,
+.stopwatch-card::before,
+.activity-summary-card::before,
+.workout-history-card::before,
+.recent-activity-card::before,
+.coach-selector-bar::before,
+.create-post-card::before,
+.community-post-card::before,
+.post-card::before,
+.challenge-card::before,
+.trending-card::before,
+.member-spotlight-card::before,
+.leaderboard-card::before,
+.profile-lively-hero::before,
+.profile-card::before,
+.body-comp-card::before,
+.edit-profile-card::before,
+.settings-section-card::before,
+.settings-card::before,
+.notifications-shell::before,
+.notification-card::before,
+.admin-card::before,
+.admin-stat-card::before,
+.auth-card::before,
+.onboarding-card::before,
+.card::before,
+.glass-box::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle,
+    rgba(0, 140, 255, 0.07) 0%,
+    rgba(255, 255, 255, 0.04) 30%,
+    transparent 70%
+  );
+  animation: glassCardAuraRotate 14s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Hover elevation & neon bloom */
+.dashboard-card:hover,
+.selected-date-banner:hover,
+.dashboard-calendar-card:hover,
+.macro-box:hover,
+.hero-calorie-box:hover,
+.hydration-interactive-card:hover,
+.staples-showcase-card:hover,
+.food-staple-card:hover,
+.meal-log-card:hover,
+.quick-fluid-card:hover,
+.stopwatch-card:hover,
+.activity-summary-card:hover,
+.workout-history-card:hover,
+.recent-activity-card:hover,
+.activity-stat-box:hover,
+.coach-selector-bar:hover,
+.create-post-card:hover,
+.community-post-card:hover,
+.post-card:hover,
+.challenge-card:hover,
+.trending-card:hover,
+.member-spotlight-card:hover,
+.leaderboard-card:hover,
+.profile-card:hover,
+.body-comp-card:hover,
+.edit-profile-card:hover,
+.settings-section-card:hover,
+.settings-card:hover,
+.notification-card:hover,
+.admin-card:hover,
+.admin-stat-card:hover,
+.card:hover,
+.glass-box:hover {
+  transform: translateY(-4px);
+  border-color: rgba(0, 140, 255, 0.65) !important;
+  box-shadow: 0 20px 45px -8px rgba(0, 140, 255, 0.22),
+              inset 0 0 0 1px rgba(255, 255, 255, 0.85),
+              0 0 30px rgba(0, 140, 255, 0.28) !important;
+}
+
+/* 3. DARK MODE GLASS BOX ADAPTATION */
+[data-theme="dark"] .dashboard-card,
+[data-theme="dark"] .selected-date-banner,
+[data-theme="dark"] .dashboard-calendar-card,
+[data-theme="dark"] .macro-box,
+[data-theme="dark"] .hero-calorie-box,
+[data-theme="dark"] .hydration-interactive-card,
+[data-theme="dark"] .staples-showcase-card,
+[data-theme="dark"] .food-staple-card,
+[data-theme="dark"] .meal-log-card,
+[data-theme="dark"] .quick-fluid-card,
+[data-theme="dark"] .stopwatch-card,
+[data-theme="dark"] .activity-summary-card,
+[data-theme="dark"] .workout-history-card,
+[data-theme="dark"] .recent-activity-card,
+[data-theme="dark"] .activity-stat-box,
+[data-theme="dark"] .coach-selector-bar,
+[data-theme="dark"] .ai-chat-shell,
+[data-theme="dark"] .create-post-card,
+[data-theme="dark"] .community-post-card,
+[data-theme="dark"] .post-card,
+[data-theme="dark"] .challenge-card,
+[data-theme="dark"] .trending-card,
+[data-theme="dark"] .member-spotlight-card,
+[data-theme="dark"] .leaderboard-card,
+[data-theme="dark"] .chats-shell,
+[data-theme="dark"] .profile-lively-hero,
+[data-theme="dark"] .profile-card,
+[data-theme="dark"] .body-comp-card,
+[data-theme="dark"] .edit-profile-card,
+[data-theme="dark"] .stat-highlight-box,
+[data-theme="dark"] .settings-section-card,
+[data-theme="dark"] .settings-card,
+[data-theme="dark"] .notifications-shell,
+[data-theme="dark"] .notification-card,
+[data-theme="dark"] .admin-card,
+[data-theme="dark"] .admin-stat-card,
+[data-theme="dark"] .admin-table-container,
+[data-theme="dark"] .auth-card,
+[data-theme="dark"] .onboarding-card,
+[data-theme="dark"] .card,
+[data-theme="dark"] .glass-box {
+  border: 1.5px solid rgba(255, 255, 255, 0.2) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(15, 23, 42, 0.92) 0%,
+    rgba(14, 40, 72, 0.82) 25%,
+    rgba(32, 28, 48, 0.88) 50%,
+    rgba(12, 45, 82, 0.85) 75%,
+    rgba(15, 23, 42, 0.92) 100%
+  ) !important;
+  background-size: 300% 300% !important;
+  animation: glassCardBgAnimate 10s ease-in-out infinite alternate !important;
+  box-shadow: 0 12px 35px -5px rgba(0, 0, 0, 0.5),
+              inset 0 0 0 1px rgba(255, 255, 255, 0.16),
+              inset 0 1.5px 0 0 rgba(255, 255, 255, 0.35),
+              0 0 20px rgba(0, 140, 255, 0.18);
+}
+
+[data-theme="dark"] .dashboard-card:hover,
+[data-theme="dark"] .selected-date-banner:hover,
+[data-theme="dark"] .dashboard-calendar-card:hover,
+[data-theme="dark"] .macro-box:hover,
+[data-theme="dark"] .hero-calorie-box:hover,
+[data-theme="dark"] .hydration-interactive-card:hover,
+[data-theme="dark"] .staples-showcase-card:hover,
+[data-theme="dark"] .food-staple-card:hover,
+[data-theme="dark"] .meal-log-card:hover,
+[data-theme="dark"] .quick-fluid-card:hover,
+[data-theme="dark"] .stopwatch-card:hover,
+[data-theme="dark"] .activity-summary-card:hover,
+[data-theme="dark"] .workout-history-card:hover,
+[data-theme="dark"] .recent-activity-card:hover,
+[data-theme="dark"] .activity-stat-box:hover,
+[data-theme="dark"] .coach-selector-bar:hover,
+[data-theme="dark"] .create-post-card:hover,
+[data-theme="dark"] .community-post-card:hover,
+[data-theme="dark"] .post-card:hover,
+[data-theme="dark"] .challenge-card:hover,
+[data-theme="dark"] .trending-card:hover,
+[data-theme="dark"] .member-spotlight-card:hover,
+[data-theme="dark"] .leaderboard-card:hover,
+[data-theme="dark"] .profile-card:hover,
+[data-theme="dark"] .body-comp-card:hover,
+[data-theme="dark"] .edit-profile-card:hover,
+[data-theme="dark"] .settings-section-card:hover,
+[data-theme="dark"] .settings-card:hover,
+[data-theme="dark"] .notification-card:hover,
+[data-theme="dark"] .admin-card:hover,
+[data-theme="dark"] .admin-stat-card:hover,
+[data-theme="dark"] .card:hover,
+[data-theme="dark"] .glass-box:hover {
+  border-color: rgba(0, 140, 255, 0.8) !important;
+  box-shadow: 0 20px 50px -8px rgba(0, 140, 255, 0.35),
+              inset 0 0 0 1px rgba(255, 255, 255, 0.3),
+              0 0 35px rgba(0, 140, 255, 0.4) !important;
+}
+
+/* 4. UNIVERSAL GLOSSY & THICK HEADINGS (EVERY PAGE) */
+.card-heading h3,
+.current-date-text,
+.cal-title-area h3,
+.macro-box h2,
+.hero-calorie-box h2,
+.m-tag,
+.stopwatch-card h3,
+.activity-summary-card h3,
+.workout-history-card h3,
+.create-post-card h3,
+.community-header h1,
+.chats-sidebar-header h2,
+.ai-header h1,
+.settings-header h1,
+.settings-section-card h2,
+.settings-section-card h3,
+.profile-lively-hero h2,
+.profile-card h3,
+.body-comp-card h3,
+.edit-profile-card h3,
+.activity-header h1,
+.nutrition-hero-header h1,
+.dashboard-welcome h1,
+.onboarding-header h2,
+.auth-header h2,
+.admin-card h2,
+.admin-card h3,
+.section-title,
+.box-heading,
+.glossy-heading {
+  font-weight: 900 !important;
+  letter-spacing: -0.4px;
+  background: linear-gradient(
+    135deg,
+    #0f172a 0%,
+    #1d4ed8 25%,
+    #008cff 45%,
+    #38bdf8 65%,
+    #0f172a 80%,
+    #008cff 100%
+  ) !important;
+  background-size: 250% auto !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  filter: drop-shadow(0 2px 4px rgba(0, 140, 255, 0.18));
+  animation: glossyHeaderShine 8s ease infinite !important;
+  display: inline-block;
+}
+
+[data-theme="dark"] .card-heading h3,
+[data-theme="dark"] .current-date-text,
+[data-theme="dark"] .cal-title-area h3,
+[data-theme="dark"] .macro-box h2,
+[data-theme="dark"] .hero-calorie-box h2,
+[data-theme="dark"] .m-tag,
+[data-theme="dark"] .stopwatch-card h3,
+[data-theme="dark"] .activity-summary-card h3,
+[data-theme="dark"] .workout-history-card h3,
+[data-theme="dark"] .create-post-card h3,
+[data-theme="dark"] .community-header h1,
+[data-theme="dark"] .chats-sidebar-header h2,
+[data-theme="dark"] .ai-header h1,
+[data-theme="dark"] .settings-header h1,
+[data-theme="dark"] .settings-section-card h2,
+[data-theme="dark"] .settings-section-card h3,
+[data-theme="dark"] .profile-lively-hero h2,
+[data-theme="dark"] .profile-card h3,
+[data-theme="dark"] .body-comp-card h3,
+[data-theme="dark"] .edit-profile-card h3,
+[data-theme="dark"] .activity-header h1,
+[data-theme="dark"] .nutrition-hero-header h1,
+[data-theme="dark"] .dashboard-welcome h1,
+[data-theme="dark"] .onboarding-header h2,
+[data-theme="dark"] .auth-header h2,
+[data-theme="dark"] .admin-card h2,
+[data-theme="dark"] .admin-card h3,
+[data-theme="dark"] .section-title,
+[data-theme="dark"] .box-heading,
+[data-theme="dark"] .glossy-heading {
+  background: linear-gradient(
+    135deg,
+    #ffffff 0%,
+    #93c5fd 25%,
+    #008cff 45%,
+    #f8fafc 65%,
+    #38bdf8 85%,
+    #ffffff 100%
+  ) !important;
+  background-size: 250% auto !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  filter: drop-shadow(0 2px 8px rgba(0, 140, 255, 0.45));
 }

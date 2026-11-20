@@ -155,10 +155,10 @@ export function OnboardingPage() {
 
             <div className="form-two-cols">
               <div className="form-field">
-                <label>Display Name <small>(Can be common, e.g. Alex)</small></label>
+                <label>Display Name <small>(Can be common, e.g. Sachin)</small></label>
                 <input
                   type="text"
-                  placeholder="e.g. Alex Mercer"
+                  placeholder="e.g. Sachin"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
                   required
@@ -173,7 +173,7 @@ export function OnboardingPage() {
                   <span className="at-prefix">@</span>
                   <input
                     type="text"
-                    placeholder="e.g. alex99"
+                    placeholder="e.g. sachin99"
                     value={username}
                     onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ""))}
                     required

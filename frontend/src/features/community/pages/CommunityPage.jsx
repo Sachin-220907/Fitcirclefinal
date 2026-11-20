@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../../authentication/context/AuthContext";
+import { useSocket } from "../../../app/providers/SocketProvider";
 import "./CommunityPage.css";
 
 const INITIAL_POSTS = [
@@ -31,7 +32,7 @@ const INITIAL_POSTS = [
     likes: 68,
     isLiked: true,
     comments: [
-      { id: 103, user: "Alex Mercer", text: "Massive lift David! Form looked clean as well." }
+      { id: 103, user: "Sachin", text: "Massive lift David! Form looked clean as well." }
     ]
   },
   {
@@ -58,13 +59,14 @@ const CHALLENGES = [
 const LEADERBOARD = [
   { rank: 1, name: "Marcus Vance", points: 3420, streak: "28 days", badge: "🥇 Diamond" },
   { rank: 2, name: "Sarah Jenkins", points: 3180, streak: "24 days", badge: "🥈 Platinum" },
-  { rank: 3, name: "Alex Mercer (You)", points: 2890, streak: "14 days", badge: "🥉 Gold" },
+  { rank: 3, name: "Sachin (You)", points: 2890, streak: "14 days", badge: "🥉 Gold" },
   { rank: 4, name: "David Chen", points: 2650, streak: "19 days", badge: "⭐ Silver" },
   { rank: 5, name: "Chloe Dupont", points: 2410, streak: "11 days", badge: "⭐ Silver" }
 ];
 
 export function CommunityPage() {
   const { user } = useAuth();
+  const { emit, on } = useSocket();
   const [posts, setPosts] = useState(INITIAL_POSTS);
   const [challenges, setChallenges] = useState(CHALLENGES);
   const [newPostContent, setNewPostContent] = useState("");
@@ -72,18 +74,39 @@ export function CommunityPage() {
   const [activeCommentPostId, setActiveCommentPostId] = useState(null);
   const [commentInput, setCommentInput] = useState("");
 
+  // Listen for real-time community posts and comments
+  useEffect(() => {
+    const unsubPost = on("COMMUNITY_POST_CREATED", (newPost) => {
+      setPosts((prev) => {
+        if (prev.some((p) => p.id === newPost.id)) return prev;
+        return [newPost, ...prev];
+      });
+    });
+
+    const unsubLike = on("COMMUNITY_POST_LIKED", ({ postId, likes }) => {
+      setPosts((prev) =>
+        prev.map((p) => (p.id === postId ? { ...p, likes } : p))
+      );
+    });
+
+    return () => {
+      unsubPost();
+      unsubLike();
+    };
+  }, [on]);
+
   function handleCreatePost(e) {
     e.preventDefault();
     if (!newPostContent.trim()) return;
 
     const newPost = {
       id: Date.now(),
-      author: user?.displayName || "Alex Mercer",
-      handle: `@${user?.username || "alexmercer"}`,
+      author: user?.displayName || "Sachin",
+      handle: `@${user?.username || "sachin"}`,
       avatar: user?.avatarUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
       badge: "Active Member",
       timeAgo: "Just now",
-      content: newPostContent,
+      content: newPostContent.trim(),
       tag: selectedTag,
       likes: 1,
       isLiked: true,
@@ -92,6 +115,8 @@ export function CommunityPage() {
 
     setPosts([newPost, ...posts]);
     setNewPostContent("");
+
+    emit("COMMUNITY_POST_CREATED", newPost);
   }
 
   function handleToggleLike(postId) {
@@ -99,10 +124,14 @@ export function CommunityPage() {
       prev.map((post) => {
         if (post.id === postId) {
           const nextLiked = !post.isLiked;
+          const nextLikes = nextLiked ? post.likes + 1 : post.likes - 1;
+
+          emit("COMMUNITY_POST_LIKED", { postId, likes: nextLikes });
+
           return {
             ...post,
             isLiked: nextLiked,
-            likes: nextLiked ? post.likes + 1 : post.likes - 1
+            likes: nextLikes
           };
         }
         return post;
@@ -113,19 +142,18 @@ export function CommunityPage() {
   function handleAddComment(postId) {
     if (!commentInput.trim()) return;
 
+    const newComment = {
+      id: Date.now(),
+      user: user?.displayName || "Sachin",
+      text: commentInput.trim()
+    };
+
     setPosts((prev) =>
       prev.map((post) => {
         if (post.id === postId) {
           return {
             ...post,
-            comments: [
-              ...post.comments,
-              {
-                id: Date.now(),
-                user: user?.displayName || "Alex Mercer",
-                text: commentInput
-              }
-            ]
+            comments: [...post.comments, newComment]
           };
         }
         return post;
@@ -166,7 +194,7 @@ export function CommunityPage() {
           <div className="create-post-card">
             <div className="composer-top">
               <div className="composer-avatar">
-                {user?.displayName ? user.displayName.charAt(0).toUpperCase() : "A"}
+                {user?.displayName ? user.displayName.charAt(0).toUpperCase() : "S"}
               </div>
               <textarea
                 placeholder="Share your workout win, meal prep, or fitness milestone..."

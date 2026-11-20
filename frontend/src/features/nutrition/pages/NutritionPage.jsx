@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSocket } from "../../../app/providers/SocketProvider";
 import "./NutritionPage.css";
 
+// EXACT 10 BASIC IMPORTANT FOODS WITH CHECKED HIGH QUALITY RELATABLE IMAGES
 const TEN_BASIC_FOODS = [
   {
     id: "f1",
     name: "Oats",
-    image: "https://imgs.search.brave.com/frcGOHvQekgsVq79W8J7Ap-30bfUkZLHzRKXQoRELAM/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvODk5/Nzk2NTI0L3Bob3Rv/L29hdC1mbGFrZXMt/aW4tYS1nbGFzcy1i/b3dsLmpwZz9zPTYx/Mng2MTImdz0wJms9/MjAmYz1vU3I0SUI5/cjJFSXduMjRIU2dU/Nm1SZ0dHU3BmbWdC/SmtCSEFXS29OMlc4/PQ",
+    image: "https://images.unsplash.com/photo-1584776296944-ab6fb57b0bdd?auto=format&fit=crop&w=600&q=80",
     serving: "1 cup (80g dry)",
     calories: 300,
     protein: 10,
@@ -16,11 +18,11 @@ const TEN_BASIC_FOODS = [
   },
   {
     id: "f2",
-    name: "WholeEggs",
-    image: "https://images.unsplash.com/photo-1506976785307-8732e854ad03?auto=format&fit=crop&w=400&q=80",
-    serving: "1 egg",
+    name: "Whole Eggs",
+    image: "https://images.unsplash.com/photo-1506976785307-8732e854ad03?auto=format&fit=crop&w=600&q=80",
+    serving: "2 large eggs",
     calories: 140,
-    protein: 6,
+    protein: 12,
     carbs: 1,
     fats: 10,
     category: "breakfast",
@@ -28,8 +30,8 @@ const TEN_BASIC_FOODS = [
   },
   {
     id: "f3",
-    name: "Chicken Breast Cooked",
-    image: "https://imgs.search.brave.com/iy8PzE8Xadp3rg0tpyx0i0P3EWgJnfU2qmPydokPg20/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMudmVjdGVlenku/Y29tL3N5c3RlbS9y/ZXNvdXJjZXMvdGh1/bWJuYWlscy8wNzUv/NjIzLzMxOC9zbWFs/bC9ncmlsbGVkLWNo/aWNrZW4tYnJlYXN0/LW9uLWJsYWNrLXBs/YXRlLXdpdGgtaGVy/YnMtcGhvdG8uanBn",
+    name: "Grilled Chicken Breast",
+    image: "https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=600&q=80",
     serving: "150g cooked",
     calories: 220,
     protein: 46,
@@ -40,44 +42,44 @@ const TEN_BASIC_FOODS = [
   },
   {
     id: "f4",
-    name: "Bread",
-    image: "https://imgs.search.brave.com/XOUdzVvJeeowsJ02Sn_wuXbK24z1TUM24mo3NNf6jNM/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvNDgx/NTk4ODAwL3Bob3Rv/L3BsYWluLWJyZWFk/LmpwZz9zPTYxMng2/MTImdz0wJms9MjAm/Yz1BNjZhWnZXaUtV/eXJaMGpVMHBzcVc4/STV6ZHBkeWdrZ3Vf/N25UbllvczFVPQ",
-    serving: "200g",
-    calories: 530,
-    protein: 18,
-    carbs: 98,
-    fats: 6,
-    category: "breakfast",
-    tag: "Complex Carbs & Fiber"
+    name: "Atlantic Salmon Fillet",
+    image: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=600&q=80",
+    serving: "150g fillet",
+    calories: 280,
+    protein: 34,
+    carbs: 0,
+    fats: 15,
+    category: "dinner",
+    tag: "Omega-3 & Healthy Fats"
   },
   {
     id: "f5",
     name: "Rice",
-    image: "https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?auto=format&fit=crop&w=400&q=80",
+    image: "https://images.unsplash.com/photo-1516684732162-798a0062be99?auto=format&fit=crop&w=600&q=80",
     serving: "1 cup cooked (150g)",
-    calories: 215,
-    protein: 5,
+    calories: 205,
+    protein: 4.5,
     carbs: 45,
-    fats: 2,
+    fats: 0.5,
     category: "lunch",
     tag: "Glycogen Fuel"
   },
   {
     id: "f6",
-    name: "Greek Yogurt",
-    image: "https://imgs.search.brave.com/QgmoZ2ipMKoAfuOFF6VKlFquQv0D5hBC_T3Q-KbwKwA/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvNTQ1/MzQwMTU2L3Bob3Rv/L2Jvd2wtb2Ytd2hp/dGUteW9naHVydC13/aXRoLWJlcnJpZXMt/aXNvbGF0ZWQtb24t/d2hpdGUtYmFjLmpw/Zz9zPTYxMng2MTIm/dz0wJms9MjAmYz0z/RWUxdDU2QUcwd19F/Tlo3dDZweVBKNjhu/ei1CZ0RZdUpxM1NB/T3BqSExJPQ",
+    name: "Plain Yogurt",
+    image: "https://images.unsplash.com/photo-1571212515416-fef01fc43637?auto=format&fit=crop&w=600&q=80",
     serving: "1 cup (170g)",
-    calories: 130,
-    protein: 18,
+    calories: 120,
+    protein: 15,
     carbs: 6,
-    fats: 4,
-    category: "snacks",
-    tag: "Slow-Release Casein"
+    fats: 3.5,
+    category: "breakfast",
+    tag: "Gut Health & Casein"
   },
   {
     id: "f7",
-    name: "Banana",
-    image: "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?auto=format&fit=crop&w=400&q=80",
+    name: "Fresh Banana",
+    image: "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?auto=format&fit=crop&w=600&q=80",
     serving: "1 medium banana",
     calories: 105,
     protein: 1.3,
@@ -89,7 +91,7 @@ const TEN_BASIC_FOODS = [
   {
     id: "f8",
     name: "Raw Almonds",
-    image: "https://images.unsplash.com/photo-1508061253366-f7da158b6d46?auto=format&fit=crop&w=400&q=80",
+    image: "https://images.unsplash.com/photo-1508061253366-f7da158b6d46?auto=format&fit=crop&w=600&q=80",
     serving: "1 handful (28g)",
     calories: 160,
     protein: 6,
@@ -100,8 +102,8 @@ const TEN_BASIC_FOODS = [
   },
   {
     id: "f9",
-    name: "Chapati",
-    image: "https://imgs.search.brave.com/IFvj6FUI6wbH6rBktzk3E8mC17CxxZT_U8luvsWi7Ho/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvMTEy/Njg0OTY1OS9waG90/by9jaGFwYXRpLXRh/dmEtcm90aS1hbHNv/LWtub3duLWFzLWlu/ZGlhbi1icmVhZC1v/ci1mdWxrYS1waHVs/a2EtbWFpbi1pbmdy/ZWRpZW50LW9mLWx1/bmNoLWRpbm5lci5q/cGc_cz02MTJ4NjEy/Jnc9MCZrPTIwJmM9/SWxzMVBGOTRwbklu/SHB1NnNmN2dfNzhB/bU5tS2N3amJ2M29l/VnFWdGFXMD0",
+    name: "Fresh Broccoli",
+    image: "https://images.unsplash.com/photo-1584270354949-c26b0d5b4a0c?auto=format&fit=crop&w=600&q=80",
     serving: "1.5 cups (150g)",
     calories: 55,
     protein: 3.7,
@@ -112,32 +114,34 @@ const TEN_BASIC_FOODS = [
   },
   {
     id: "f10",
-    name: "Salmon (Cooked)",
-    image: "https://imgs.search.brave.com/7LUDzJ7Fi8BboQjep6Qqdz6sBMjzFqROoszgdm92Gjw/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzE1LzY0LzkyLzM3/LzM2MF9GXzE1NjQ5/MjM3NzZfNk1INjV2/UlJuMXQ4Y0dDN3Bm/MG9La2UyRm94VXVx/OHguanBn",
-    serving: "1 scoop (30g)",
-    calories: 130,
-    protein: 25,
-    carbs: 3,
-    fats: 1.5,
-    category: "snacks",
-    tag: "Fast Post-Workout Anabolism"
+    name: "Bread",
+    image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80",
+    serving: "2 slices (70g)",
+    calories: 160,
+    protein: 7,
+    carbs: 28,
+    fats: 2,
+    category: "breakfast",
+    tag: "Daily Energy & Fiber"
   }
 ];
 
+// MEAL CATEGORIES WITH EXACT RELATABLE COVER PHOTOGRAPHY
 const MEAL_CATEGORIES = [
   {
     key: "breakfast",
     label: "Breakfast",
     timing: "Morning Fuel (07:00 - 10:00)",
     icon: "🍳",
-    image: "https://imgs.search.brave.com/-srOY4LXtP6wA_0AbkhK68XBrO4BPyCMRrgMnLOJyUY/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMudmVjdGVlenku/Y29tL3N5c3RlbS9y/ZXNvdXJjZXMvdGh1/bWJuYWlscy8wMTAv/ODU4LzIzNy9zbWFs/bC90YXN0eS1icmVh/a2Zhc3Qtd2l0aC1l/Z2dzLXNhdXNhZ2Vz/LXRvYXN0cy1hbmQt/Y3VwLW9mLWNvZmZl/ZS1hbWVyaWNhbi1i/cmVha2Zhc3QtcGhv/dG8uanBn",
+    image: "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?auto=format&fit=crop&w=600&q=80",
+    suggestedKcal: 550
   },
   {
     key: "lunch",
     label: "Lunch",
     timing: "Midday Sustenance (12:00 - 14:30)",
     icon: "🥗",
-    image: "https://imgs.search.brave.com/7LUDzJ7Fi8BboQjep6Qqdz6sBMjzFqROoszgdm92Gjw/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzE1LzY0LzkyLzM3/LzM2MF9GXzE1NjQ5/MjM3NzZfNk1INjV2/UlJuMXQ4Y0dDN3Bm/MG9La2UyRm94VXVx/OHguanBn",
+    image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80",
     suggestedKcal: 700
   },
   {
@@ -160,27 +164,84 @@ const MEAL_CATEGORIES = [
 
 const INITIAL_LOGGED = {
   breakfast: [
-    { id: 1, name: "Oats (Oatmeal)", calories: 300, protein: 10, carbs: 54, fats: 5, serving: "1 cup (80g dry)" },
-    { id: 2, name: "Whole Eggs", calories: 140, protein: 6, carbs: 1, fats: 10, serving: "1 egg" }
+    { id: 1, name: "Oats", calories: 300, protein: 10, carbs: 54, fats: 5, serving: "1 cup (80g dry)" },
+    { id: 2, name: "Whole Eggs", calories: 140, protein: 12, carbs: 1, fats: 10, serving: "2 large eggs" }
   ],
   lunch: [
     { id: 3, name: "Grilled Chicken Breast", calories: 220, protein: 46, carbs: 0, fats: 3.5, serving: "150g cooked" },
-    { id: 4, name: "Brown Rice & Quinoa", calories: 215, protein: 5, carbs: 45, fats: 2, serving: "1 cup cooked (150g)" }
+    { id: 4, name: "Rice", calories: 205, protein: 4.5, carbs: 45, fats: 0.5, serving: "1 cup cooked (150g)" }
   ],
   dinner: [
     { id: 5, name: "Atlantic Salmon Fillet", calories: 280, protein: 34, carbs: 0, fats: 15, serving: "150g fillet" },
-    { id: 6, name: "Steamed Fresh Broccoli", calories: 55, protein: 3.7, carbs: 11, fats: 0.6, serving: "1.5 cups (150g)" }
+    { id: 6, name: "Fresh Broccoli", calories: 55, protein: 3.7, carbs: 11, fats: 0.6, serving: "1.5 cups (150g)" }
   ],
   snacks: [
-    { id: 7, name: "Whey Protein Shake", calories: 130, protein: 25, carbs: 3, fats: 1.5, serving: "1 scoop in water" }
+    { id: 7, name: "Plain Yogurt", calories: 120, protein: 15, carbs: 6, fats: 3.5, serving: "1 cup (170g)" },
+    { id: 8, name: "Fresh Banana", calories: 105, protein: 1.3, carbs: 27, fats: 0.3, serving: "1 medium banana" }
   ]
 };
 
 export function NutritionPage() {
+  const { emit, on } = useSocket();
   const [meals, setMeals] = useState(INITIAL_LOGGED);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState("breakfast");
 
+  // Water Intake State
+  const [waterMl, setWaterMl] = useState(() => {
+    try {
+      const saved = localStorage.getItem("fitcircle_water_ml");
+      return saved ? Number(saved) : 2250;
+    } catch {
+      return 2250;
+    }
+  });
+
+  const [waterGoalMl, setWaterGoalMl] = useState(() => {
+    try {
+      const saved = localStorage.getItem("fitcircle_water_goal_ml");
+      return saved ? Number(saved) : 3000;
+    } catch {
+      return 3000;
+    }
+  });
+
+  const [customWaterInput, setCustomWaterInput] = useState("");
+  const [customGoalInput, setCustomGoalInput] = useState("");
+  const [isEditingGoal, setIsEditingGoal] = useState(false);
+
+  const [sipLogs, setSipLogs] = useState(() => {
+    try {
+      const saved = localStorage.getItem("fitcircle_sip_logs");
+      if (saved) return JSON.parse(saved);
+    } catch {
+      // fallback
+    }
+    return [
+      { id: 1, amount: 500, time: "08:15 AM", label: "Morning Hydration" },
+      { id: 2, amount: 750, time: "11:30 AM", label: "Workout Hydration" },
+      { id: 3, amount: 500, time: "02:00 PM", label: "Desk Water Refill" },
+      { id: 4, amount: 500, time: "05:15 PM", label: "Post-Run Refreshment" }
+    ];
+  });
+
+  // Real-time synchronization for water intake across tabs
+  useEffect(() => {
+    const unsubscribe = on("WATER_LOG_UPDATED", (payload) => {
+      if (payload?.waterMl !== undefined) {
+        setWaterMl(payload.waterMl);
+      }
+      if (payload?.waterGoalMl !== undefined) {
+        setWaterGoalMl(payload.waterGoalMl);
+      }
+      if (payload?.sipLogs) {
+        setSipLogs(payload.sipLogs);
+      }
+    });
+    return unsubscribe;
+  }, [on]);
+
+  // Form states for adding custom food
   const [foodName, setFoodName] = useState("");
   const [foodCalories, setFoodCalories] = useState("");
   const [foodProtein, setFoodProtein] = useState("");
@@ -188,6 +249,7 @@ export function NutritionPage() {
   const [foodFats, setFoodFats] = useState("");
   const [foodServing, setFoodServing] = useState("1 standard serving");
 
+  // Aggregated totals
   const allFoods = [...meals.breakfast, ...meals.lunch, ...meals.dinner, ...meals.snacks];
   const totalCalories = allFoods.reduce((acc, f) => acc + f.calories, 0);
   const totalProtein = allFoods.reduce((acc, f) => acc + f.protein, 0);
@@ -198,6 +260,73 @@ export function NutritionPage() {
   const proteinGoal = 150;
   const carbsGoal = 220;
   const fatsGoal = 65;
+
+  // Add water with custom amount & log sip
+  function addWaterAmount(mlToAdd, label = "Water Added") {
+    const val = Number(mlToAdd);
+    if (!val || val <= 0) return;
+
+    const nextWater = waterMl + val;
+    setWaterMl(nextWater);
+    localStorage.setItem("fitcircle_water_ml", String(nextWater));
+
+    const newSip = {
+      id: Date.now(),
+      amount: val,
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      label
+    };
+
+    const nextSips = [newSip, ...sipLogs];
+    setSipLogs(nextSips);
+    localStorage.setItem("fitcircle_sip_logs", JSON.stringify(nextSips));
+    setCustomWaterInput("");
+
+    // Broadcast in real-time
+    emit("WATER_LOG_UPDATED", {
+      waterMl: nextWater,
+      waterGoalMl,
+      sipLogs: nextSips
+    });
+  }
+
+  function handleUndoWater() {
+    const nextWater = Math.max(0, waterMl - 250);
+    setWaterMl(nextWater);
+    localStorage.setItem("fitcircle_water_ml", String(nextWater));
+
+    let nextSips = sipLogs;
+    if (sipLogs.length > 0) {
+      nextSips = sipLogs.slice(1);
+      setSipLogs(nextSips);
+      localStorage.setItem("fitcircle_sip_logs", JSON.stringify(nextSips));
+    }
+
+    emit("WATER_LOG_UPDATED", {
+      waterMl: nextWater,
+      waterGoalMl,
+      sipLogs: nextSips
+    });
+  }
+
+  function handleSaveCustomGoal(e) {
+    e?.preventDefault();
+    const val = parseFloat(customGoalInput);
+    if (val && val > 0) {
+      // If user inputs in Liters (e.g. 2.5 or 3), convert to ml
+      const goalInMl = val < 20 ? Math.round(val * 1000) : Math.round(val);
+      setWaterGoalMl(goalInMl);
+      localStorage.setItem("fitcircle_water_goal_ml", String(goalInMl));
+      setIsEditingGoal(false);
+      setCustomGoalInput("");
+
+      emit("WATER_LOG_UPDATED", {
+        waterMl,
+        waterGoalMl: goalInMl,
+        sipLogs
+      });
+    }
+  }
 
   function handleAddBasicFood(foodItem) {
     const targetCat = foodItem.category || activeCategory;
@@ -211,10 +340,14 @@ export function NutritionPage() {
       serving: foodItem.serving
     };
 
-    setMeals((prev) => ({
-      ...prev,
-      [targetCat]: [...prev[targetCat], newEntry]
-    }));
+    setMeals((prev) => {
+      const updated = {
+        ...prev,
+        [targetCat]: [...prev[targetCat], newEntry]
+      };
+      emit("MEALS_UPDATED", updated);
+      return updated;
+    });
   }
 
   function handleCustomAddSubmit(e) {
@@ -231,10 +364,14 @@ export function NutritionPage() {
       serving: foodServing.trim() || "1 serving"
     };
 
-    setMeals((prev) => ({
-      ...prev,
-      [activeCategory]: [...prev[activeCategory], newEntry]
-    }));
+    setMeals((prev) => {
+      const updated = {
+        ...prev,
+        [activeCategory]: [...prev[activeCategory], newEntry]
+      };
+      emit("MEALS_UPDATED", updated);
+      return updated;
+    });
 
     setFoodName("");
     setFoodCalories("");
@@ -245,10 +382,42 @@ export function NutritionPage() {
   }
 
   function handleDeleteFood(catKey, foodId) {
-    setMeals((prev) => ({
-      ...prev,
-      [catKey]: prev[catKey].filter((f) => f.id !== foodId)
-    }));
+    setMeals((prev) => {
+      const updated = {
+        ...prev,
+        [catKey]: prev[catKey].filter((f) => f.id !== foodId)
+      };
+      emit("MEALS_UPDATED", updated);
+      return updated;
+    });
+  }
+
+  // Determine active vessel type based on logged water:
+  // <= 1.0 L (1000ml) -> Glass
+  // > 1.0 L && <= 3.0 L (1001ml - 3000ml) -> Bottle
+  // > 3.0 L (> 3000ml) -> Jug
+  const waterLiters = waterMl / 1000;
+  let activeVessel = "glass";
+  if (waterMl > 3000) {
+    activeVessel = "jug";
+  } else if (waterMl > 1000) {
+    activeVessel = "bottle";
+  }
+
+  const waterPercentage = Math.min(100, Math.round((waterMl / waterGoalMl) * 100));
+
+  // Compute fill height for each vessel type
+  let vesselFillPercent = 0;
+  if (activeVessel === "glass") {
+    // Glass capacity is 1000ml
+    vesselFillPercent = Math.min(100, Math.max(5, Math.round((waterMl / 1000) * 100)));
+  } else if (activeVessel === "bottle") {
+    // Bottle spans 1000ml to 3000ml (2000ml range)
+    vesselFillPercent = Math.min(100, Math.max(10, Math.round(((waterMl - 1000) / 2000) * 100)));
+  } else {
+    // Jug spans > 3000ml up to goal or 5000ml
+    const jugMax = Math.max(5000, waterGoalMl);
+    vesselFillPercent = Math.min(100, Math.max(20, Math.round((waterMl / jugMax) * 100)));
   }
 
   return (
@@ -270,6 +439,7 @@ export function NutritionPage() {
         </button>
       </header>
 
+      {/* Daily Macro Barometer */}
       <section className="macro-barometer-grid">
         <div className="macro-box hero-calorie-box">
           <div className="m-box-top">
@@ -334,6 +504,7 @@ export function NutritionPage() {
         </div>
       </section>
 
+      {/* 10 BASIC IMPORTANT FOODS WITH CHECKED EXACT RELATABLE IMAGES */}
       <section className="ten-foods-section">
         <div className="section-header-row">
           <div>
@@ -348,6 +519,7 @@ export function NutritionPage() {
             <div key={food.id} className="food-staple-card">
               <div className="staple-image-wrapper">
                 <img src={food.image} alt={food.name} className="staple-img" />
+                <span className="staple-cat-badge">{food.category}</span>
               </div>
 
               <div className="staple-content">
@@ -375,6 +547,7 @@ export function NutritionPage() {
         </div>
       </section>
 
+      {/* MEALS BREAKDOWN WITH RELATABLE REAL IMAGES FOR BREAKFAST, LUNCH, DINNER, SNACKS */}
       <section className="meals-breakdown-section">
         <div className="section-header-row">
           <div>
@@ -455,6 +628,221 @@ export function NutritionPage() {
         </div>
       </section>
 
+      {/* DYNAMIC WATER INTAKE SECTION WITH DYNAMIC VESSEL: GLASS (<=1L), BOTTLE (1L-3L), JUG (>3L) */}
+      <section className="water-intake-section">
+        <div className="water-intake-header">
+          <div>
+            <h3>Water Intake 💧</h3>
+            <p>Smart real-time hydration tracker with adaptive vessels: Glass for ≤ 1L, Bottle for 1L – 3L, and Jug for &gt; 3L.</p>
+          </div>
+
+          <div className="water-target-controls">
+            <span className="target-label">Daily Target:</span>
+            {!isEditingGoal ? (
+              <div className="target-display-chip" onClick={() => setIsEditingGoal(true)}>
+                <strong>{(waterGoalMl / 1000).toFixed(1)} L</strong>
+                <button type="button" className="btn-edit-target" title="Set custom target">✏️ Edit</button>
+              </div>
+            ) : (
+              <form onSubmit={handleSaveCustomGoal} className="custom-goal-form">
+                <input
+                  type="number"
+                  step="0.1"
+                  min="0.5"
+                  max="10"
+                  placeholder="e.g. 3.5"
+                  value={customGoalInput}
+                  onChange={(e) => setCustomGoalInput(e.target.value)}
+                  autoFocus
+                />
+                <button type="submit" className="btn-save-goal">Save</button>
+                <button type="button" className="btn-cancel-goal" onClick={() => setIsEditingGoal(false)}>✕</button>
+              </form>
+            )}
+          </div>
+        </div>
+
+        {/* Vessel Stage Indicators */}
+        <div className="vessel-stage-indicator-bar">
+          <div className={`vessel-stage-pill ${activeVessel === "glass" ? "active" : ""}`}>
+            <span className="v-pill-icon">🥛</span>
+            <span>Glass Stage (≤ 1.0 L)</span>
+          </div>
+          <div className="stage-arrow">→</div>
+          <div className={`vessel-stage-pill ${activeVessel === "bottle" ? "active" : ""}`}>
+            <span className="v-pill-icon">🧴</span>
+            <span>Bottle Stage (1.0 L – 3.0 L)</span>
+          </div>
+          <div className="stage-arrow">→</div>
+          <div className={`vessel-stage-pill ${activeVessel === "jug" ? "active" : ""}`}>
+            <span className="v-pill-icon">🫙</span>
+            <span>Jug Stage (&gt; 3.0 L)</span>
+          </div>
+        </div>
+
+        <div className="water-intake-body">
+          {/* Dynamic Graphic Vessel Container */}
+          <div className="dynamic-vessel-display">
+            <div className={`vessel-canvas vessel-${activeVessel}`}>
+              {/* GLASS VESSEL (shown when <= 1.0 L) */}
+              {activeVessel === "glass" && (
+                <div className="svg-vessel glass-vessel">
+                  <div className="glass-rim"></div>
+                  <div className="glass-body">
+                    <div
+                      className="vessel-water-fill"
+                      style={{ height: `${vesselFillPercent}%` }}
+                    >
+                      <div className="water-wave-top"></div>
+                    </div>
+                    <div className="glass-graduations">
+                      <span>1.0 L</span>
+                      <span>0.5 L</span>
+                      <span>0.25 L</span>
+                    </div>
+                  </div>
+                  <span className="vessel-badge">Drinking Glass</span>
+                </div>
+              )}
+
+              {/* BOTTLE VESSEL (shown when > 1.0 L and <= 3.0 L) */}
+              {activeVessel === "bottle" && (
+                <div className="svg-vessel bottle-vessel">
+                  <div className="bottle-cap"></div>
+                  <div className="bottle-neck"></div>
+                  <div className="bottle-body">
+                    <div
+                      className="vessel-water-fill"
+                      style={{ height: `${vesselFillPercent}%` }}
+                    >
+                      <div className="water-wave-top"></div>
+                    </div>
+                    <div className="bottle-graduations">
+                      <span>3.0 L</span>
+                      <span>2.0 L</span>
+                      <span>1.0 L</span>
+                    </div>
+                  </div>
+                  <span className="vessel-badge">Sports Bottle</span>
+                </div>
+              )}
+
+              {/* JUG VESSEL (shown when > 3.0 L) */}
+              {activeVessel === "jug" && (
+                <div className="svg-vessel jug-vessel">
+                  <div className="jug-cap"></div>
+                  <div className="jug-handle"></div>
+                  <div className="jug-body">
+                    <div
+                      className="vessel-water-fill"
+                      style={{ height: `${vesselFillPercent}%` }}
+                    >
+                      <div className="water-wave-top"></div>
+                    </div>
+                    <div className="jug-graduations">
+                      <span>Max</span>
+                      <span>4.0 L</span>
+                      <span>3.0 L</span>
+                    </div>
+                  </div>
+                  <span className="vessel-badge">Hydration Jug</span>
+                </div>
+              )}
+            </div>
+
+            <div className="vessel-metrics-summary">
+              <strong className="current-water-text">{waterLiters.toFixed(2)} L</strong>
+              <span className="goal-subtext">of {(waterGoalMl / 1000).toFixed(1)} L Goal ({waterPercentage}%)</span>
+              <span className="hydration-status-banner">
+                {waterMl >= waterGoalMl
+                  ? "🎉 Daily Target Reached! Outstanding Hydration!"
+                  : `${((waterGoalMl - waterMl) / 1000).toFixed(2)} L remaining today`}
+              </span>
+            </div>
+          </div>
+
+          {/* Simple Clean Water Adder Controls */}
+          <div className="water-intake-actions">
+            <div className="simple-add-water-box">
+              <span className="action-box-title">Add Water:</span>
+              <div className="quick-step-buttons">
+                <button
+                  type="button"
+                  className="btn-quick-step"
+                  onClick={() => addWaterAmount(250, "Glass (+250ml)")}
+                >
+                  +250 ml
+                </button>
+                <button
+                  type="button"
+                  className="btn-quick-step primary"
+                  onClick={() => addWaterAmount(500, "Bottle (+500ml)")}
+                >
+                  +500 ml
+                </button>
+                <button
+                  type="button"
+                  className="btn-quick-step"
+                  onClick={() => addWaterAmount(1000, "Liter (+1000ml)")}
+                >
+                  +1,000 ml (1L)
+                </button>
+                <button
+                  type="button"
+                  className="btn-quick-step undo"
+                  onClick={handleUndoWater}
+                  title="Undo 250ml"
+                >
+                  ↩ -250 ml
+                </button>
+              </div>
+
+              {/* Custom ml volume input */}
+              <div className="custom-water-adder-row">
+                <input
+                  type="number"
+                  placeholder="Enter custom ml (e.g. 330)..."
+                  value={customWaterInput}
+                  onChange={(e) => setCustomWaterInput(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="btn-submit-water"
+                  onClick={() => addWaterAmount(customWaterInput, "Custom Volume")}
+                  disabled={!customWaterInput || Number(customWaterInput) <= 0}
+                >
+                  + Add Water
+                </button>
+              </div>
+            </div>
+
+            {/* Today's Sip History */}
+            <div className="sip-history-card">
+              <span className="sip-title">Today's Water Log</span>
+              <div className="sip-list-scroll">
+                {sipLogs.length > 0 ? (
+                  sipLogs.map((sip) => (
+                    <div key={sip.id} className="sip-item-row">
+                      <div className="sip-item-left">
+                        <span className="sip-drop-icon">💧</span>
+                        <strong>+{sip.amount} ml</strong>
+                      </div>
+                      <div className="sip-item-right">
+                        <span>{sip.label}</span>
+                        <small>{sip.time}</small>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="no-sips-text">No water entries logged yet today.</p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Modal for adding custom food item */}
       {isAddModalOpen && (
         <div className="modal-backdrop" onClick={() => setIsAddModalOpen(false)}>
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>

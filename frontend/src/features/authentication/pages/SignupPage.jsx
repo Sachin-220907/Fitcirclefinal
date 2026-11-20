@@ -68,7 +68,7 @@ export function SignupPage() {
         <form onSubmit={handleSubmit} className="auth-actions">
           <input
             type="text"
-            placeholder="Full Name (e.g. Alex Mercer)"
+            placeholder="Full Name (e.g. Sachin)"
             className="auth-input"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}

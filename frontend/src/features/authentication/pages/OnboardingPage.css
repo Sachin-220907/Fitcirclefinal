@@ -1,6 +1,6 @@
 .onboarding-page-shell {
   min-height: 100vh;
-  background: var(--bg-primary, #f6f8fc);
+  background: transparent;
   display: flex;
   justify-content: center;
   align-items: center;
