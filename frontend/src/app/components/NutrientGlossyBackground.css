@@ -1,0 +1,358 @@
+/* ==========================================================================
+   GLOSSY ANIMATED NUTRIENT BACKGROUND CANVAS
+   ========================================================================== */
+
+.nutrient-glossy-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* Sweeping diagonal liquid gloss reflection */
+.glossy-sheen-wave {
+  position: absolute;
+  top: -100%;
+  left: -100%;
+  width: 300%;
+  height: 300%;
+  background: linear-gradient(
+    115deg,
+    transparent 0%,
+    transparent 42%,
+    rgba(255, 255, 255, 0.04) 47%,
+    rgba(255, 255, 255, 0.14) 50%,
+    rgba(255, 255, 255, 0.04) 53%,
+    transparent 58%,
+    transparent 100%
+  );
+  animation: glossySheenSweep 16s ease-in-out infinite;
+  transform: translateZ(0);
+}
+
+.glossy-sheen-wave-secondary {
+  position: absolute;
+  top: -100%;
+  left: -100%;
+  width: 300%;
+  height: 300%;
+  background: linear-gradient(
+    135deg,
+    transparent 0%,
+    transparent 45%,
+    rgba(0, 140, 255, 0.05) 50%,
+    rgba(16, 185, 129, 0.05) 52%,
+    transparent 57%,
+    transparent 100%
+  );
+  animation: glossySheenSweep 22s ease-in-out infinite reverse;
+  animation-delay: -6s;
+  transform: translateZ(0);
+}
+
+@keyframes glossySheenSweep {
+  0% {
+    transform: translate(-30%, -30%) rotate(0deg);
+  }
+  50% {
+    transform: translate(15%, 15%) rotate(5deg);
+  }
+  100% {
+    transform: translate(-30%, -30%) rotate(0deg);
+  }
+}
+
+/* Nutrient Spheres Container */
+.nutrient-spheres-container {
+  position: absolute;
+  inset: 0;
+}
+
+/* 3D Glossy Nutrient Sphere */
+.nutrient-sphere {
+  position: absolute;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: floatNutrientSphere ease-in-out infinite alternate;
+  will-change: transform;
+  opacity: 0.78;
+  transition: opacity 0.5s ease;
+}
+
+/* Specular High-Gloss Glint at Top Left */
+.sphere-specular-glint {
+  position: absolute;
+  top: 8%;
+  left: 12%;
+  width: 44%;
+  height: 32%;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at 35% 30%,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(255, 255, 255, 0.7) 35%,
+    rgba(255, 255, 255, 0.15) 70%,
+    transparent 100%
+  );
+  transform: rotate(-25deg);
+  pointer-events: none;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.8));
+}
+
+/* Glassy Rim Light around the sphere */
+.sphere-rim-light {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.75);
+  box-shadow: inset 2px 2px 8px rgba(255, 255, 255, 0.85),
+              inset -3px -3px 10px rgba(0, 0, 0, 0.12);
+  pointer-events: none;
+}
+
+/* Glowing Core Aura */
+.sphere-inner-glow {
+  position: absolute;
+  bottom: 8%;
+  right: 12%;
+  width: 50%;
+  height: 40%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.35) 0%,
+    transparent 80%
+  );
+  pointer-events: none;
+}
+
+/* Sphere text content */
+.sphere-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 6px;
+  pointer-events: none;
+}
+
+.sphere-icon {
+  font-size: 20px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  line-height: 1;
+}
+
+.sphere-label {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #ffffff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  margin-top: 3px;
+  line-height: 1.1;
+}
+
+.sphere-code {
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  padding: 1px 5px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.22);
+  margin-top: 2px;
+  border: 0.5px solid rgba(255, 255, 255, 0.4);
+}
+
+/* ==========================================================================
+   NUTRIENT-SPECIFIC GLOSSY COLOR SHADING
+   ========================================================================== */
+
+/* 1. Protein & Aminos (Vital Coral / Rose Gloss) */
+.nutrient-protein {
+  background: radial-gradient(
+    circle at 35% 30%,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(253, 164, 175, 0.85) 22%,
+    rgba(244, 63, 94, 0.75) 60%,
+    rgba(159, 18, 57, 0.85) 100%
+  );
+  box-shadow: 0 12px 30px -4px rgba(244, 63, 94, 0.28),
+              0 0 20px rgba(244, 63, 94, 0.2);
+}
+
+/* 2. Hydration & Pure Water (Electric Azure / Cyan Gloss) */
+.nutrient-hydration {
+  background: radial-gradient(
+    circle at 35% 30%,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(186, 230, 253, 0.85) 22%,
+    rgba(2, 132, 199, 0.75) 60%,
+    rgba(3, 105, 161, 0.85) 100%
+  );
+  box-shadow: 0 12px 30px -4px rgba(2, 132, 199, 0.3),
+              0 0 25px rgba(0, 140, 255, 0.25);
+}
+
+/* 3. Omega Lipids (Avocado & Emerald Gloss) */
+.nutrient-lipid {
+  background: radial-gradient(
+    circle at 35% 30%,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(187, 247, 208, 0.85) 22%,
+    rgba(16, 185, 129, 0.75) 60%,
+    rgba(6, 95, 70, 0.85) 100%
+  );
+  box-shadow: 0 12px 30px -4px rgba(16, 185, 129, 0.28),
+              0 0 20px rgba(16, 185, 129, 0.2);
+}
+
+/* 4. Complex Carbs & Glycogen (Warm Golden Amber Gloss) */
+.nutrient-carbs {
+  background: radial-gradient(
+    circle at 35% 30%,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(254, 240, 138, 0.85) 22%,
+    rgba(245, 158, 11, 0.75) 60%,
+    rgba(180, 83, 9, 0.85) 100%
+  );
+  box-shadow: 0 12px 30px -4px rgba(245, 158, 11, 0.28),
+              0 0 20px rgba(245, 158, 11, 0.2);
+}
+
+/* 5. Vitamins & Antioxidants (Lustrous Berry Violet Gloss) */
+.nutrient-vitamin {
+  background: radial-gradient(
+    circle at 35% 30%,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(233, 213, 255, 0.85) 22%,
+    rgba(168, 85, 247, 0.75) 60%,
+    rgba(107, 33, 168, 0.85) 100%
+  );
+  box-shadow: 0 12px 30px -4px rgba(168, 85, 247, 0.28),
+              0 0 20px rgba(168, 85, 247, 0.2);
+}
+
+/* 6. Electrolytes & Minerals (Cyan-Electric Spark Gloss) */
+.nutrient-mineral {
+  background: radial-gradient(
+    circle at 35% 30%,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(207, 250, 254, 0.85) 22%,
+    rgba(6, 182, 212, 0.75) 60%,
+    rgba(14, 116, 144, 0.85) 100%
+  );
+  box-shadow: 0 12px 30px -4px rgba(6, 182, 212, 0.28),
+              0 0 20px rgba(6, 182, 212, 0.2);
+}
+
+/* 7. Chlorophyll & Greens (Deep Botanic Emerald Gloss) */
+.nutrient-greens {
+  background: radial-gradient(
+    circle at 35% 30%,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(220, 252, 231, 0.85) 22%,
+    rgba(34, 197, 94, 0.75) 60%,
+    rgba(21, 128, 61, 0.85) 100%
+  );
+  box-shadow: 0 12px 30px -4px rgba(34, 197, 94, 0.28),
+              0 0 20px rgba(34, 197, 94, 0.2);
+}
+
+/* 8. Metabolism & Energy (Citrus Flame Gloss) */
+.nutrient-energy {
+  background: radial-gradient(
+    circle at 35% 30%,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(254, 215, 170, 0.85) 22%,
+    rgba(249, 115, 22, 0.75) 60%,
+    rgba(194, 65, 12, 0.85) 100%
+  );
+  box-shadow: 0 12px 30px -4px rgba(249, 115, 22, 0.28),
+              0 0 20px rgba(249, 115, 22, 0.2);
+}
+
+/* Floating Animation Physics */
+@keyframes floatNutrientSphere {
+  0% {
+    transform: translateY(0px) translateX(0px) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translateY(-22px) translateX(14px) rotate(3deg) scale(1.03);
+  }
+  50% {
+    transform: translateY(-8px) translateX(-18px) rotate(-2deg) scale(0.97);
+  }
+  75% {
+    transform: translateY(18px) translateX(-8px) rotate(2deg) scale(1.02);
+  }
+  100% {
+    transform: translateY(-16px) translateX(20px) rotate(-3deg) scale(1.01);
+  }
+}
+
+/* Subtle cellular nutrition energy mesh in background */
+.nutrient-cellular-mesh {
+  position: absolute;
+  inset: 0;
+  opacity: 0.16;
+  background-image: 
+    radial-gradient(circle at 50% 50%, rgba(0, 140, 255, 0.18) 1.5px, transparent 1.5px),
+    radial-gradient(circle at 0% 100%, rgba(16, 185, 129, 0.15) 2px, transparent 2px);
+  background-size: 40px 40px, 60px 60px;
+  animation: cellularMeshDrift 30s linear infinite;
+}
+
+@keyframes cellularMeshDrift {
+  0% {
+    background-position: 0 0, 0 0;
+  }
+  100% {
+    background-position: 80px 80px, -120px 60px;
+  }
+}
+
+/* ==========================================================================
+   DARK / LATTE THEME ADAPTATION (BIOLUMINESCENT GLOSS)
+   ========================================================================== */
+
+[data-theme="dark"] .nutrient-sphere {
+  opacity: 0.72;
+}
+
+[data-theme="dark"] .sphere-rim-light {
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: inset 2px 2px 8px rgba(255, 255, 255, 0.5),
+              inset -3px -3px 10px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .glossy-sheen-wave {
+  background: linear-gradient(
+    115deg,
+    transparent 0%,
+    transparent 42%,
+    rgba(255, 255, 255, 0.02) 47%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.02) 53%,
+    transparent 58%,
+    transparent 100%
+  );
+}
+
+[data-theme="dark"] .nutrient-cellular-mesh {
+  opacity: 0.10;
+}
